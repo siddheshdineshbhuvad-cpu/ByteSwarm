@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import com.byteSwarm.bytesWarm.model.Task;
 import com.byteSwarm.bytesWarm.service.TaskService;
 
+
+
+import com.byteSwarm.bytesWarm.model.TaskStatus;
+
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
