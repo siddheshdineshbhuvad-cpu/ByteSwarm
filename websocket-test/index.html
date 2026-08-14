@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ByteSwarm WebSocket Test</title>
+</head>
+<body>
+
+    <h2>ByteSwarm Worker Test</h2>
+
+    <button onclick="connect()">Connect Worker</button>
+
+    <p id="status">Disconnected</p>
+
+    <script>
+        let socket;
+
+        function connect() {
+            socket = new WebSocket("ws://localhost:8080/ws");
+
+            socket.onopen = function () {
+                document.getElementById("status").innerText =
+                    "Worker Connected!";
+                console.log("WebSocket Connected");
+            };
+
+            socket.onmessage = function (event) {
+                console.log("Message from Server:", event.data);
+            };
+
+            socket.onerror = function (error) {
+                console.log("WebSocket Error:", error);
+            };
+
+            socket.onclose = function () {
+                document.getElementById("status").innerText =
+                    "Disconnected";
+                console.log("WebSocket Disconnected");
+            };
+        }
+    </script>
+
+</body>
+</html>
