@@ -8,6 +8,7 @@
     <h2>ByteSwarm Worker Test</h2>
 
     <button onclick="connect()">Connect Worker</button>
+    <button onclick="sendMessage()">Send Test Message</button>
 
     <p id="status">Disconnected</p>
 
@@ -15,7 +16,7 @@
         let socket;
 
         function connect() {
-            socket = new WebSocket("ws://localhost:8080/ws");
+            socket = new WebSocket("ws://localhost:8080/worker-ws");
 
             socket.onopen = function () {
                 document.getElementById("status").innerText =
@@ -36,6 +37,15 @@
                     "Disconnected";
                 console.log("WebSocket Disconnected");
             };
+        }
+
+        function sendMessage() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send("Hello ByteSwarm");
+                console.log("Message sent to server");
+            } else {
+                console.log("Worker is not connected");
+            }
         }
     </script>
 
