@@ -22,7 +22,7 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
 
         String workerId = session.getId();
 
-       Worker worker = new Worker(workerId);
+       Worker worker = new Worker(workerId, session);
         workerRegistry.registerWorker(worker);
 
         System.out.println("Worker registered: " + workerId);

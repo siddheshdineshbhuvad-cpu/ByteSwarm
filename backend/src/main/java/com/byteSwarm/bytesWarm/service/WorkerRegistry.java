@@ -22,4 +22,16 @@ public class WorkerRegistry {
     public Map<String, Worker> getWorkers() {
         return workers;
     }
+
+    public Worker getAvailableWorker() {
+
+        for (Worker worker : workers.values()) {
+
+            if ("AVAILABLE".equals(worker.getStatus())) {
+                return worker;
+            }
+        }
+
+        return null;
+    }
 }
