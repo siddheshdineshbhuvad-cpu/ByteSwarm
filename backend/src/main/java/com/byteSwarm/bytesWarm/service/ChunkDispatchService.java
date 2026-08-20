@@ -30,7 +30,14 @@ public class ChunkDispatchService {
             return false;
         }
 
-        String message = String.join("\n", chunk);
+        String taskId = "TASK-" + System.currentTimeMillis();
+
+        String message =
+                "TASK\n" +
+                "taskId: " + taskId + "\n" +
+                "chunkSize: " + chunk.size() + "\n" +
+                "data:\n" +
+                String.join("\n", chunk);
 
         worker.getSession().sendMessage(
                 new TextMessage(message)
@@ -39,8 +46,9 @@ public class ChunkDispatchService {
         worker.setStatus("BUSY");
 
         System.out.println(
-                "Chunk dispatched to worker: "
-                        + worker.getWorkerId()
+                "Task " + taskId +
+                " dispatched to worker: " +
+                worker.getWorkerId()
         );
 
         return true;
