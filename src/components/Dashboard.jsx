@@ -42,7 +42,7 @@ const Dashboard = () => {
       addLog('Attempting to connect to master node…');
 
       try {
-        ws = new WebSocket('ws://localhost:8080/ws');
+       ws = new WebSocket('ws://localhost:8081/worker-ws');
         wsRef.current = ws;
 
         ws.onopen = () => {
