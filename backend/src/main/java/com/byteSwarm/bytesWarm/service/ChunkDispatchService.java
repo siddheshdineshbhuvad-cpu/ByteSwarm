@@ -33,11 +33,15 @@ public class ChunkDispatchService {
         String taskId = "TASK-" + System.currentTimeMillis();
 
         String message =
-                "TASK\n" +
-                "taskId: " + taskId + "\n" +
-                "chunkSize: " + chunk.size() + "\n" +
-                "data:\n" +
-                String.join("\n", chunk);
+                "{"
+                + "\"type\":\"START\","
+                + "\"taskId\":\"" + taskId + "\","
+                + "\"algorithm\":\"PRIME_COUNT\","
+                + "\"params\":{"
+                + "\"start\":1,"
+                + "\"end\":100"
+                + "}"
+                + "}";
 
         worker.getSession().sendMessage(
                 new TextMessage(message)
