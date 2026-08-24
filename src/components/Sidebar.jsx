@@ -1,9 +1,10 @@
 import React from 'react';
-import { LayoutDashboard, Cpu, Network, Settings } from 'lucide-react';
+import { LayoutDashboard, Cpu, Network, Settings, Activity } from 'lucide-react';
 
 const Sidebar = ({ activeTab = 'dashboard', onTabChange }) => {
   const navItems = [
     { id: 'dashboard', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+    { id: 'isolation', icon: <Activity size={20} />, label: 'Thread Isolation Check' },
     { id: 'worker', icon: <Cpu size={20} />, label: 'Worker Integration' },
     { id: 'topology', icon: <Network size={20} />, label: 'Grid Topology' },
     { id: 'settings', icon: <Settings size={20} />, label: 'Settings' },
