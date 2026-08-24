@@ -280,6 +280,45 @@ This prevents long-running computations from freezing the Dashboard UI.
 
 ---
 
+# 📅 Mid-Project Review – Thread Isolation Check
+
+## 🎯 Objective
+
+The main objective of the **Mid-Project Review** was to visually and empirically prove **Thread Isolation** — demonstrating that heavy mathematical computation (100,000,000+ iterations) running inside an HTML5 Web Worker does **not freeze the React UI**, maintaining a smooth **~60 FPS** frame rate.
+
+## 🔄 Thread Isolation Workflow
+
+```text
+             Heavy Computation (100M Iterations)
+                            │
+                            ▼
+           Web Worker (computeWorker.js)
+                            │
+                  ┌─────────┴─────────┐
+                  │                   │
+              CPU Work           React UI
+                  │                   │
+                  │              60 FPS
+                  │                   │
+                  │              Animation (🔵)
+                  │                   │
+                  │              User Click Test
+                  │                   │
+                  └───────────────────┘
+```
+
+## ✅ Mid-Project Review Deliverables
+
+* ⚙️ Created `src/workers/computeWorker.js` dedicated background worker.
+* ⚛️ Built `ThreadIsolationCheck.jsx` visual dashboard.
+* 📊 Implemented high-precision FPS monitor using `requestAnimationFrame`.
+* 🔵 Added continuous motion test track (`🔵 ← continuously moving →`) to visually verify 60 FPS rendering.
+* 🖱️ Added interactive UI click tester to prove button click responsiveness during worker computation.
+* ⚡ Implemented side-by-side **Web Worker vs Main Thread** comparison mode.
+* 💬 Verified isolated execution performance statement.
+
+---
+
 # 📁 Project Structure
 
 ```text
@@ -287,13 +326,16 @@ BYTESWARM/
 ├── backend/                    ← Java backend / Master Node
 ├── Frontend/                   ← React frontend
 ├── public/
-│   └── worker.js               ← HTML5 Web Worker
+│   └── worker.js               ← HTML5 Web Worker (Week 2 Engine)
 ├── src/
 │   ├── components/
+│   │   ├── ThreadIsolationCheck.jsx ← Mid-Project Review Dashboard
 │   │   ├── WorkerPanel.jsx     ← Worker management & computation
 │   │   ├── ProgressBar.jsx     ← Progress & ETA display
 │   │   ├── ResultCard.jsx      ← Computation result & Java status
 │   │   └── ConsoleLogs.jsx     ← Logs, sorting & export
+│   ├── workers/
+│   │   └── computeWorker.js    ← Web Worker for Thread Isolation Check
 │   ├── App.jsx                 ← Main React application
 │   ├── index.css               ← Global styling
 │   └── main.jsx                ← React entry point
@@ -305,36 +347,23 @@ BYTESWARM/
 
 # 📈 Overall Project Progress
 
-| Phase                                  |    Progress |
-| -------------------------------------- | ----------: |
-| 📅 Week 1 – Grid & Connection Frontend |      ✅ 100% |
-| 📅 Week 2 – Web Worker Integration     |      ✅ 100% |
-| 🚀 Overall Development Status          | 🟢 On Track |
+| Phase                                     |    Progress |
+| ----------------------------------------- | ----------: |
+| 📅 Week 1 – Grid & Connection Frontend    |      ✅ 100% |
+| 📅 Week 2 – Web Worker Integration        |      ✅ 100% |
+| 🟢 Mid-Project Review – Thread Isolation  |      ✅ 100% |
+| 🚀 Overall Development Status             | 🟢 On Track |
 
 ## 📝 Additional Updates
 
 ### 🚧 Blockers
 
-* No major blockers during Week 2.
-* Minor issues related to Worker lifecycle, duplicate Worker instances, React StrictMode, progress animation, and CSS were identified.
-* All identified issues were resolved and tested successfully.
+* No major blockers during Week 1, Week 2, or Mid-Project Review.
+* All identified thread isolation, Web Worker lifecycle, and UI responsiveness checks were validated successfully.
 
-### 👨‍🏫 Mentor Notes
+### 👨‍🏫 Mentor Notes & Review Statement
 
-* Web Worker implementation was reviewed and verified.
-* Recommended maintaining a single active Worker instance.
-* Progress tracking and WebSocket status handling were improved.
-* Continued focus on clean component structure and proper Worker lifecycle management.
-
-### 🔄 Other Updates
-
-* PING/PONG successfully confirms Worker communication.
-* Background computations run without blocking the main UI thread.
-* Four mathematical algorithms are currently integrated.
-* Console logs can be viewed, sorted, and exported.
-* Result re-emission functionality has been implemented.
-* Loading and progress states have been improved.
-* Week 2 implementation is stable and ready for the next development phase.
+> *"For the Thread Isolation Check, I intentionally run a computationally intensive workload inside an HTML5 Web Worker instead of the React main thread. While the Worker processes the large dataset, I monitor the UI frame rate using `requestAnimationFrame`. The animation and UI remain responsive at approximately 60 FPS, demonstrating that the heavy computation is isolated from the main React thread."*
 
 ---
 
@@ -347,8 +376,12 @@ Week 1 – Grid & Connection Frontend
 Week 2 – Web Worker Integration
 ████████████████████ 100% ✅
 
+Mid-Project Review – Thread Isolation Check
+████████████████████ 100% ✅
+
 Overall Project Status
 ████████████████████ On Track 🚀
 ```
 
-ByteSwarm's frontend foundation and Web Worker integration are successfully completed for Weeks 1 and 2. The project is ready to proceed with the next phase of distributed computation and frontend enhancements.
+ByteSwarm's frontend foundation, Web Worker integration, and Mid-Project Review Thread Isolation Check are 100% completed and ready for evaluation.
+

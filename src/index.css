@@ -114,6 +114,12 @@ h1, h2, h3 {
   animation: pulse-glow 2s infinite;
 }
 
+@keyframes moveTrack {
+  0%   { transform: translateX(0%); }
+  50%  { transform: translateX(calc(100% - 48px)); }
+  100% { transform: translateX(0%); }
+}
+
 .animate-spin {
   animation: spin 1s linear infinite;
 }

@@ -3,11 +3,16 @@ import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import WorkerStatus from './WorkerStatus';
 import WorkerPanel from './WorkerPanel';
-import { Terminal, Cpu, Zap, ArrowRight } from 'lucide-react';
+import ThreadIsolationCheck from './ThreadIsolationCheck';
+import { Terminal, Cpu, Zap, ArrowRight, Activity } from 'lucide-react';
 
 const Dashboard = () => {
   const getInitialTab = () => {
-    if (typeof window !== 'undefined' && window.location.pathname.includes('worker')) return 'worker';
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      if (path.includes('isolation') || path.includes('review') || path.includes('check')) return 'isolation';
+      if (path.includes('worker')) return 'worker';
+    }
     return 'dashboard';
   };
 
@@ -143,6 +148,22 @@ const Dashboard = () => {
                 Overview
               </button>
               <button
+                id="tab-btn-isolation"
+                onClick={() => setActiveTab('isolation')}
+                style={{
+                  padding: '0.5rem 1rem', borderRadius: '8px',
+                  border: '1px solid rgba(16,185,129,0.3)',
+                  background: activeTab === 'isolation' ? 'linear-gradient(135deg, #059669, #10b981)' : 'rgba(16,185,129,0.1)',
+                  color: activeTab === 'isolation' ? '#fff' : '#34d399',
+                  cursor: 'pointer', fontWeight: 600, fontSize: '0.875rem',
+                  display: 'flex', alignItems: 'center', gap: '0.4rem',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <Activity size={16} />
+                Thread Isolation (Mid-Review)
+              </button>
+              <button
                 id="tab-btn-worker"
                 onClick={() => setActiveTab('worker')}
                 style={{
@@ -168,13 +189,20 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* ── Worker Status Bar — always visible ─────────────────── */}
-          <WorkerStatus
-            workerId={workerId}
-            connectionStatus={connectionStatus}
-            workerState={workerState}
-            tasksCompleted={tasksCompleted}
-          />
+          {/* ── Worker Status Bar — visible on non-isolation tabs ── */}
+          {activeTab !== 'isolation' && (
+            <WorkerStatus
+              workerId={workerId}
+              connectionStatus={connectionStatus}
+              workerState={workerState}
+              tasksCompleted={tasksCompleted}
+            />
+          )}
+
+          {/* ── Thread Isolation Check Component (Mid-Project Review) ── */}
+          {activeTab === 'isolation' && (
+            <ThreadIsolationCheck />
+          )}
 
           {/* ── Worker Panel — always in DOM, hidden via CSS when off-tab ── */}
           <div style={{ display: activeTab === 'worker' ? 'block' : 'none' }}>
@@ -188,7 +216,7 @@ const Dashboard = () => {
           </div>
 
           {/* ── Other tab views ─────────────────────────────────────── */}
-          {activeTab === 'topology' ? (
+          {activeTab === 'isolation' ? null : activeTab === 'topology' ? (
             <div className="glass-panel" style={{ padding: '2rem', textAlign: 'center', borderRadius: '16px' }}>
               <Zap size={32} color="var(--accent-primary)" style={{ marginBottom: '1rem' }} />
               <h3>Grid Topology View</h3>
