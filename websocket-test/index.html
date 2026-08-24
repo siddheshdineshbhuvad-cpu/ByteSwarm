@@ -16,7 +16,7 @@
         let socket;
 
         function connect() {
-            socket = new WebSocket("ws://localhost:8080/worker-ws");
+            const socket = new WebSocket("ws://localhost:8080/worker-ws");
 
             socket.onopen = function () {
                 document.getElementById("status").innerText =

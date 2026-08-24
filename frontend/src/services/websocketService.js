@@ -11,8 +11,7 @@ class WebSocketService {
 
         console.log("Worker ID:", this.clientId);
 
-        this.socket = new WebSocket("ws://localhost:8080/ws");
-
+        this.socket = new WebSocket("ws://localhost:8080/worker-ws");
         this.socket.onopen = () => {
 
             console.log("Connected to ByteSwarm backend");

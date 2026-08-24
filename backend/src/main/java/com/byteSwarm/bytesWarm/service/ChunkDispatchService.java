@@ -32,16 +32,22 @@ public class ChunkDispatchService {
 
         String taskId = "TASK-" + System.currentTimeMillis();
 
-        String message =
-                "TASK\n" +
-                "taskId: " + taskId + "\n" +
-                "chunkSize: " + chunk.size() + "\n" +
-                "data:\n" +
-                String.join("\n", chunk);
+        String data = String.join("\n", chunk)
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "");
 
-        worker.getSession().sendMessage(
-                new TextMessage(message)
-        );
+        String message =
+                "{"
+                + "\"type\":\"CHUNK_TASK\","
+                + "\"taskId\":\"" + taskId + "\","
+                + "\"algorithm\":\"CHUNK_PROCESS\","
+                + "\"chunkSize\":" + chunk.size() + ","
+                + "\"data\":\"" + data + "\""
+                + "}";
+
+        worker.getSession().sendMessage(new TextMessage(message));
 
         worker.setStatus("BUSY");
 
