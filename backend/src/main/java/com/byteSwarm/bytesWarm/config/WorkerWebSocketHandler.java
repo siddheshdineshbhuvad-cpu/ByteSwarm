@@ -22,10 +22,12 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
 
         String workerId = session.getId();
 
-       Worker worker = new Worker(workerId, session);
+        Worker worker = new Worker(workerId, session);
         workerRegistry.registerWorker(worker);
 
-        System.out.println("Worker registered: " + workerId);
+        System.out.println(
+                "[WORKER CONNECTED] Worker registered: " + workerId
+        );
     }
 
     @Override
@@ -34,7 +36,8 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
             TextMessage message) {
 
         System.out.println(
-                "Worker message: " + message.getPayload()
+                "[WORKER MESSAGE] " + session.getId()
+                        + " → " + message.getPayload()
         );
     }
 
@@ -45,10 +48,21 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
 
         String workerId = session.getId();
 
-        workerRegistry.removeWorker(workerId);
+        Worker worker = workerRegistry.getWorkers().get(workerId);
 
-        System.out.println(
-                "Worker removed: " + workerId
-        );
+        if (worker != null) {
+            worker.setStatus("FAILED");
+
+            System.out.println(
+                    "[WORKER FAILED] " + workerId
+                            + " disconnected. Status: FAILED"
+            );
+
+            workerRegistry.removeWorker(workerId);
+
+            System.out.println(
+                    "[WORKER REMOVED] " + workerId
+            );
+        }
     }
 }
