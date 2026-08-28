@@ -4,12 +4,14 @@ import Sidebar from './Sidebar';
 import WorkerStatus from './WorkerStatus';
 import WorkerPanel from './WorkerPanel';
 import ThreadIsolationCheck from './ThreadIsolationCheck';
-import { Terminal, Cpu, Zap, ArrowRight, Activity } from 'lucide-react';
+import Topology from './Topology';
+import { Terminal, Cpu, Zap, ArrowRight, Activity, Network } from 'lucide-react';
 
 const Dashboard = () => {
   const getInitialTab = () => {
     if (typeof window !== 'undefined') {
       const path = window.location.pathname.toLowerCase();
+      if (path.includes('topology')) return 'topology';
       if (path.includes('isolation') || path.includes('review') || path.includes('check')) return 'isolation';
       if (path.includes('worker')) return 'worker';
     }
@@ -217,11 +219,7 @@ const Dashboard = () => {
 
           {/* ── Other tab views ─────────────────────────────────────── */}
           {activeTab === 'isolation' ? null : activeTab === 'topology' ? (
-            <div className="glass-panel" style={{ padding: '2rem', textAlign: 'center', borderRadius: '16px' }}>
-              <Zap size={32} color="var(--accent-primary)" style={{ marginBottom: '1rem' }} />
-              <h3>Grid Topology View</h3>
-              <p style={{ color: 'var(--text-muted)' }}>Visual representation of distributed worker nodes and Java Master cluster.</p>
-            </div>
+            <Topology ws={wsRef.current} localWorkerId={workerId} />
           ) : activeTab === 'settings' ? (
             <div className="glass-panel" style={{ padding: '2rem', textAlign: 'center', borderRadius: '16px' }}>
               <h3>Worker Node Configuration</h3>

@@ -154,3 +154,51 @@ button:active:not(:disabled) {
   background: var(--text-muted);
 }
 
+/* Week 3 — Network Topology UI Animations */
+@keyframes workerPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4), inset 0 0 10px rgba(56, 189, 248, 0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 35px rgba(56, 189, 248, 0.9), inset 0 0 20px rgba(56, 189, 248, 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4), inset 0 0 10px rgba(56, 189, 248, 0.2);
+  }
+}
+
+@keyframes masterPulse {
+  0% {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4), 0 0 40px rgba(59, 130, 246, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 45px rgba(139, 92, 246, 0.8), 0 0 70px rgba(59, 130, 246, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4), 0 0 40px rgba(59, 130, 246, 0.2);
+  }
+}
+
+@keyframes lineFlow {
+  0% { stroke-dashoffset: 40; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.worker-computing {
+  animation: workerPulse 1.2s ease-in-out infinite;
+  border-color: #38bdf8 !important;
+}
+
+.master-node-glow {
+  animation: masterPulse 2.5s ease-in-out infinite;
+}
+
+.connection-active {
+  stroke-dasharray: 8, 8;
+  animation: lineFlow 0.8s linear infinite;
+}
+
+

@@ -319,6 +319,41 @@ The main objective of the **Mid-Project Review** was to visually and empirically
 
 ---
 
+# 📅 Week 3 – Network Topology UI
+
+## 🎯 Objective
+
+The main objective of **Week 3** was to build a live, interactive **Network Topology Visualization** displaying the Java server as the **Master Node** and connected browser clients as **Worker Nodes**, featuring real-time state updates and blinking/pulsing computing animations.
+
+## 🔄 Week 3 Architecture & Flow
+
+```text
+                    Master Node
+                 Java Netty Server
+                         │
+          ┌──────────────┼──────────────┐
+          │              │              │
+       Worker 01      Worker 02      Worker 03
+        Browser        Browser        Browser
+          │              │              │
+       Web Worker     Web Worker     Web Worker
+          │              │              │
+      COMPUTING        IDLE          COMPUTING
+      (Pulsing)                      (Pulsing)
+```
+
+## ✅ Week 3 Deliverables
+
+* 🌐 Created `src/components/Topology.jsx` for live graph layout and controls.
+* 🖥️ Built `MasterNode.jsx` representing the Java Netty Master Server (`localhost:8080`).
+* 💻 Built `WorkerNode.jsx` displaying worker states (`CONNECTED`, `IDLE`, `COMPUTING`, `COMPLETED`, `DISCONNECTED`).
+* ⚡ Implemented `ConnectionLine.jsx` rendering SVG curves with active data flow pulses.
+* 🟢 **Blinking Computing Animation**: Applied CSS pulse aura (`@keyframes workerPulse`) when `status === 'COMPUTING'`.
+* 🔌 **Real-time WebSocket Integration**: React updates worker states automatically upon receiving `WORKER_STATUS` events from Java Master.
+* 📊 Added Fleet Statistics Bar (Connected, Computing, Idle, Completed Jobs).
+
+---
+
 # 📁 Project Structure
 
 ```text
@@ -329,6 +364,10 @@ BYTESWARM/
 │   └── worker.js               ← HTML5 Web Worker (Week 2 Engine)
 ├── src/
 │   ├── components/
+│   │   ├── Topology.jsx        ← Week 3 Network Topology View
+│   │   ├── MasterNode.jsx      ← Master Server Node Component
+│   │   ├── WorkerNode.jsx      ← Worker Client Node Component
+│   │   ├── ConnectionLine.jsx  ← Dynamic SVG Connection Lines
 │   │   ├── ThreadIsolationCheck.jsx ← Mid-Project Review Dashboard
 │   │   ├── WorkerPanel.jsx     ← Worker management & computation
 │   │   ├── ProgressBar.jsx     ← Progress & ETA display
@@ -346,24 +385,26 @@ BYTESWARM/
 ---
 
 # 📈 Overall Project Progress
+# 📈 Overall Project Progress
 
 | Phase                                     |    Progress |
 | ----------------------------------------- | ----------: |
 | 📅 Week 1 – Grid & Connection Frontend    |      ✅ 100% |
 | 📅 Week 2 – Web Worker Integration        |      ✅ 100% |
 | 🟢 Mid-Project Review – Thread Isolation  |      ✅ 100% |
+| 🌐 Week 3 – Network Topology UI           |      ✅ 100% |
 | 🚀 Overall Development Status             | 🟢 On Track |
 
 ## 📝 Additional Updates
 
 ### 🚧 Blockers
 
-* No major blockers during Week 1, Week 2, or Mid-Project Review.
-* All identified thread isolation, Web Worker lifecycle, and UI responsiveness checks were validated successfully.
+* No major blockers during Week 3 development.
+* Radial layout calculation, SVG path curves, dynamic worker fleet scaling, and real-time state synchronization were validated successfully.
 
 ### 👨‍🏫 Mentor Notes & Review Statement
 
-> *"For the Thread Isolation Check, I intentionally run a computationally intensive workload inside an HTML5 Web Worker instead of the React main thread. While the Worker processes the large dataset, I monitor the UI frame rate using `requestAnimationFrame`. The animation and UI remain responsive at approximately 60 FPS, demonstrating that the heavy computation is isolated from the main React thread."*
+> *"For Week 3, the live Network Topology graph connects directly to the Java Master Node WebSocket. Connected browser workers display real-time status transitions, with computing nodes actively pulsing while SVG data lines animate to show active workload distribution."*
 
 ---
 
@@ -379,9 +420,13 @@ Week 2 – Web Worker Integration
 Mid-Project Review – Thread Isolation Check
 ████████████████████ 100% ✅
 
+Week 3 – Network Topology UI
+████████████████████ 100% ✅
+
 Overall Project Status
 ████████████████████ On Track 🚀
 ```
 
-ByteSwarm's frontend foundation, Web Worker integration, and Mid-Project Review Thread Isolation Check are 100% completed and ready for evaluation.
+ByteSwarm's frontend foundation, Web Worker integration, Thread Isolation Check, and Week 3 Network Topology UI are 100% completed and ready for evaluation.
+
 
