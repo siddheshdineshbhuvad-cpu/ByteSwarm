@@ -2,11 +2,17 @@ package com.byteSwarm.bytesWarm.model;
 
 import org.springframework.web.socket.WebSocketSession;
 
+import java.util.List;
+
 public class Worker {
 
     private String workerId;
     private String status;
     private WebSocketSession session;
+
+    // Day 16: Track currently running chunk
+    private String currentTaskId;
+    private List<String> currentChunk;
 
     public Worker(String workerId) {
         this.workerId = workerId;
@@ -33,5 +39,26 @@ public class Worker {
 
     public WebSocketSession getSession() {
         return session;
+    }
+
+    public String getCurrentTaskId() {
+        return currentTaskId;
+    }
+
+    public void setCurrentTaskId(String currentTaskId) {
+        this.currentTaskId = currentTaskId;
+    }
+
+    public List<String> getCurrentChunk() {
+        return currentChunk;
+    }
+
+    public void setCurrentChunk(List<String> currentChunk) {
+        this.currentChunk = currentChunk;
+    }
+
+    public void clearCurrentTask() {
+        this.currentTaskId = null;
+        this.currentChunk = null;
     }
 }

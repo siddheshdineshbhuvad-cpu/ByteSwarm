@@ -1,7 +1,9 @@
 package com.byteSwarm.bytesWarm.config;
 
 import com.byteSwarm.bytesWarm.model.Worker;
+import com.byteSwarm.bytesWarm.service.ChunkDispatchService;
 import com.byteSwarm.bytesWarm.service.WorkerRegistry;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -12,21 +14,30 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class WorkerWebSocketHandler extends TextWebSocketHandler {
 
     private final WorkerRegistry workerRegistry;
+    private final ChunkDispatchService chunkDispatchService;
 
-    public WorkerWebSocketHandler(WorkerRegistry workerRegistry) {
+    public WorkerWebSocketHandler(
+            WorkerRegistry workerRegistry,
+            ChunkDispatchService chunkDispatchService) {
+
         this.workerRegistry = workerRegistry;
+        this.chunkDispatchService = chunkDispatchService;
     }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) {
+    public void afterConnectionEstablished(
+            WebSocketSession session) {
 
         String workerId = session.getId();
 
-        Worker worker = new Worker(workerId, session);
+        Worker worker =
+                new Worker(workerId, session);
+
         workerRegistry.registerWorker(worker);
 
         System.out.println(
-                "[WORKER CONNECTED] Worker registered: " + workerId
+                "[WORKER CONNECTED] Worker registered: "
+                        + workerId
         );
     }
 
@@ -36,8 +47,10 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
             TextMessage message) {
 
         System.out.println(
-                "[WORKER MESSAGE] " + session.getId()
-                        + " → " + message.getPayload()
+                "[WORKER MESSAGE] "
+                        + session.getId()
+                        + " -> "
+                        + message.getPayload()
         );
     }
 
@@ -48,20 +61,27 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
 
         String workerId = session.getId();
 
-        Worker worker = workerRegistry.getWorkers().get(workerId);
+        Worker worker =
+                workerRegistry.getWorkers().get(workerId);
 
         if (worker != null) {
+
             worker.setStatus("FAILED");
 
             System.out.println(
-                    "[WORKER FAILED] " + workerId
+                    "[WORKER FAILED] "
+                            + workerId
                             + " disconnected. Status: FAILED"
             );
+
+            // Day 16: Recover unfinished chunk
+            chunkDispatchService.recoverWorkerTask(workerId);
 
             workerRegistry.removeWorker(workerId);
 
             System.out.println(
-                    "[WORKER REMOVED] " + workerId
+                    "[WORKER REMOVED] "
+                            + workerId
             );
         }
     }
