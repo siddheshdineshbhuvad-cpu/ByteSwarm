@@ -30,14 +30,15 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
 
         String workerId = session.getId();
 
-        Worker worker =
-                new Worker(workerId, session);
+        Worker worker = new Worker(workerId, session);
 
         workerRegistry.registerWorker(worker);
 
         System.out.println(
                 "[WORKER CONNECTED] Worker registered: "
                         + workerId
+                        + " | Status: "
+                        + Worker.AVAILABLE
         );
     }
 
@@ -46,12 +47,73 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
             WebSocketSession session,
             TextMessage message) {
 
+        String workerId = session.getId();
+        String payload = message.getPayload();
+
+        Worker worker =
+                workerRegistry.getWorkers().get(workerId);
+
         System.out.println(
                 "[WORKER MESSAGE] "
-                        + session.getId()
+                        + workerId
                         + " -> "
-                        + message.getPayload()
+                        + payload
         );
+
+        if (worker == null) {
+            System.out.println(
+                    "[WORKER MESSAGE] Worker not found: "
+                            + workerId
+            );
+            return;
+        }
+
+        // Worker completed current task
+        if (payload.contains("\"type\":\"TASK_COMPLETED\"")
+                || payload.contains("\"type\":\"TASK_RESULT\"")
+                || payload.contains("\"status\":\"COMPLETED\"")
+                || payload.contains("\"status\":\"SUCCESS\"")
+                || payload.contains("COMPLETED")) {
+
+            String completedTaskId =
+                    worker.getCurrentTaskId();
+
+            worker.clearCurrentTask();
+            worker.setStatus(Worker.COMPLETED);
+
+            System.out.println(
+                    "[TASK COMPLETED] Task "
+                            + completedTaskId
+                            + " completed by worker "
+                            + workerId
+                            + " | Status: "
+                            + Worker.COMPLETED
+            );
+
+            worker.setStatus(Worker.AVAILABLE);
+
+            System.out.println(
+                    "[WORKER AVAILABLE] "
+                            + workerId
+                            + " is ready for next task."
+            );
+        }
+
+        // Worker explicitly reports failure
+        else if (payload.contains("\"type\":\"TASK_FAILED\"")
+                || payload.contains("\"status\":\"FAILED\"")
+                || payload.contains("FAILED")) {
+
+            worker.setStatus(Worker.FAILED);
+
+            System.out.println(
+                    "[TASK FAILED] Worker "
+                            + workerId
+                            + " reported task failure."
+            );
+
+            chunkDispatchService.recoverWorkerTask(workerId);
+        }
     }
 
     @Override
@@ -66,15 +128,17 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
 
         if (worker != null) {
 
-            worker.setStatus("FAILED");
+            worker.setStatus(Worker.FAILED);
 
             System.out.println(
                     "[WORKER FAILED] "
                             + workerId
-                            + " disconnected. Status: FAILED"
+                            + " disconnected."
+                            + " Status: "
+                            + Worker.FAILED
             );
 
-            // Day 16: Recover unfinished chunk
+            // Recover unfinished chunk
             chunkDispatchService.recoverWorkerTask(workerId);
 
             workerRegistry.removeWorker(workerId);
