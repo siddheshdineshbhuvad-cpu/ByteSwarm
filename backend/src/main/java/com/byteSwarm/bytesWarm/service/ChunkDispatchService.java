@@ -67,10 +67,9 @@ public class ChunkDispatchService {
                 new TextMessage(message)
         );
 
-        // Track unfinished task
         worker.setCurrentTaskId(taskId);
         worker.setCurrentChunk(chunk);
-        worker.setStatus("BUSY");
+        worker.setStatus(Worker.BUSY);
 
         System.out.println(
                 "[DISPATCH] Task " + taskId
@@ -81,7 +80,6 @@ public class ChunkDispatchService {
         return true;
     }
 
-    // Day 16: Recover unfinished task
     public void recoverWorkerTask(String workerId) {
 
         Worker failedWorker =
@@ -89,8 +87,7 @@ public class ChunkDispatchService {
 
         if (failedWorker == null) {
             System.out.println(
-                    "[RECOVERY] Worker not found: "
-                            + workerId
+                    "[RECOVERY] Worker not found: " + workerId
             );
             return;
         }
@@ -101,9 +98,7 @@ public class ChunkDispatchService {
         String failedTaskId =
                 failedWorker.getCurrentTaskId();
 
-        if (failedChunk == null ||
-                failedChunk.isEmpty()) {
-
+        if (failedChunk == null || failedChunk.isEmpty()) {
             System.out.println(
                     "[RECOVERY] No unfinished task for worker: "
                             + workerId
@@ -118,48 +113,65 @@ public class ChunkDispatchService {
                         + workerId
         );
 
-        Worker replacement =
-                workerRegistry.getAvailableWorker();
+        new Thread(() -> {
 
-        if (replacement == null) {
+            for (int attempt = 1; attempt <= 30; attempt++) {
 
-            System.out.println(
-                    "[RECOVERY] No available worker. "
-                            + "Task remains pending."
-            );
+                Worker replacement =
+                        workerRegistry.getAvailableWorker();
 
-            return;
-        }
+                if (replacement != null &&
+                        !replacement.getWorkerId().equals(workerId)) {
 
-        try {
+                    try {
 
-            boolean success =
-                    dispatchToWorker(
-                            replacement,
-                            failedChunk,
-                            failedTaskId
-                    );
+                        boolean success =
+                                dispatchToWorker(
+                                        replacement,
+                                        failedChunk,
+                                        failedTaskId
+                                );
 
-            if (success) {
+                        if (success) {
+                            System.out.println(
+                                    "[RECOVERY SUCCESS] Task "
+                                            + failedTaskId
+                                            + " reassigned from "
+                                            + workerId
+                                            + " to "
+                                            + replacement.getWorkerId()
+                            );
+                            return;
+                        }
+
+                    } catch (IOException e) {
+
+                        System.out.println(
+                                "[RECOVERY ERROR] Could not reassign task "
+                                        + failedTaskId
+                        );
+                    }
+                }
 
                 System.out.println(
-                        "[RECOVERY SUCCESS] Task "
-                                + failedTaskId
-                                + " reassigned from "
-                                + workerId
-                                + " to "
-                                + replacement.getWorkerId()
+                        "[RECOVERY RETRY] Attempt "
+                                + attempt
+                                + " - waiting for available worker..."
                 );
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
             }
 
-        } catch (IOException e) {
-
             System.out.println(
-                    "[RECOVERY ERROR] Could not reassign task "
+                    "[RECOVERY FAILED] No worker became available for task "
                             + failedTaskId
             );
 
-            e.printStackTrace();
-        }
+        }).start();
     }
 }

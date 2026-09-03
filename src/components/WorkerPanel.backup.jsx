@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ProgressBar from './ProgressBar';
 import ResultCard from './ResultCard';
 import ConsoleLogs from './ConsoleLogs';
@@ -6,9 +6,9 @@ import { Cpu, Play, Square, RefreshCw, Send, Layers, AlertTriangle, Wifi, WifiOf
 
 const ALGO_PRESETS = {
   PRIME_COUNT:    { label: 'Prime Numbers Range Search',  description: 'Count all primes in range [1, N] using trial division.' },
-  PI_MONTE_CARLO: { label: 'Monte Carlo Ï€ Estimation',    description: 'Estimate Ï€ by sampling random points in a unit circle.' },
+  PI_MONTE_CARLO: { label: 'Monte Carlo π Estimation',    description: 'Estimate π by sampling random points in a unit circle.' },
   FIBONACCI:      { label: 'BigInt Fibonacci Sequence',   description: 'Compute the Nth Fibonacci number using arbitrary-precision BigInt.' },
-  MATRIX_COMPUTE: { label: 'NÃ—N Matrix Multiplication',  description: 'Multiply two NÃ—N matrices using sin/cos-initialised values.' },
+  MATRIX_COMPUTE: { label: 'N×N Matrix Multiplication',  description: 'Multiply two N×N matrices using sin/cos-initialised values.' },
 };
 
 const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, onTaskProcessed = null, onWorkerStateChange = null }) => {
@@ -44,13 +44,13 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
   // Keep wsRef in sync without re-running effects
   useEffect(() => { wsRef.current = ws; }, [ws]);
 
-  // â”€â”€ Logging helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Logging helper ────────────────────────────────────────────────────────
   const addLog = useCallback((message, source = 'MAIN', type = 'info') => {
     const time = new Date().toLocaleTimeString();
     setLogs(prev => [...prev, { id: Date.now() + Math.random(), time, message, source, type }].slice(-150));
   }, []);
 
-  // â”€â”€ Emit result to Java Master via WebSocket â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Emit result to Java Master via WebSocket ──────────────────────────────
   const emitResultToJavaMaster = useCallback((resPayload) => {
     const javaPayload = {
       type:           'TASK_RESULT',
@@ -66,7 +66,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
     const currentWs = wsRef.current;
     if (currentWs && currentWs.readyState === WebSocket.OPEN) {
       currentWs.send(JSON.stringify(javaPayload));
-      addLog(`[WEBSOCKET] Emitted result for [${resPayload.taskId}] â†’ Java Master Node.`, 'JAVA', 'success');
+      addLog(`[WEBSOCKET] Emitted result for [${resPayload.taskId}] → Java Master Node.`, 'JAVA', 'success');
       setEmitStatus('sent');
     } else {
       addLog(`Simulated emission of [${resPayload.taskId}] to Java Master Node (Offline Mode).`, 'JAVA', 'info');
@@ -74,7 +74,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
     }
   }, [workerId, addLog]);
 
-  // â”€â”€ Initialise Web Worker â€” runs once on mount â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Initialise Web Worker — runs once on mount ───────────────────────────
   useEffect(() => {
     if (!window.Worker) {
       setWorkerSupported(false);
@@ -82,7 +82,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
       return;
     }
 
-    addLog('Initialising HTML5 Web Worker background threadâ€¦', 'MAIN', 'info');
+    addLog('Initialising HTML5 Web Worker background thread…', 'MAIN', 'info');
 
     let workerInstance = null;
     try {
@@ -116,7 +116,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
           setStatus('computing');
           setProgress(0);
           setCurrentStep(0);
-          addLog(`Background computation started: [${taskId}] â†’ ${algorithmLabel || data.algorithm}`, 'WORKER', 'info');
+          addLog(`Background computation started: [${taskId}] → ${algorithmLabel || data.algorithm}`, 'WORKER', 'info');
           break;
 
         case 'PROGRESS':
@@ -141,7 +141,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
             timestamp: Date.now()
           };
           setResultData(resPayload);
-          addLog(`âœ“ Computation finished in ${totalDuration.toLocaleString()}ms for [${taskId}]`, 'WORKER', 'success');
+          addLog(`✓ Computation finished in ${totalDuration.toLocaleString()}ms for [${taskId}]`, 'WORKER', 'success');
           emitResultToJavaMaster(resPayload);
           if (onWorkerStateChange) onWorkerStateChange('completed');
           break;
@@ -180,32 +180,24 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // â† intentionally empty: worker lives for the lifetime of this component
+  }, []); // ← intentionally empty: worker lives for the lifetime of this component
 
-  // â”€â”€ Notify parent of status changes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Notify parent of status changes ──────────────────────────────────────
   useEffect(() => {
     if (onWorkerStateChange) onWorkerStateChange(status);
   }, [status, onWorkerStateChange]);
 
-  // â”€â”€ Handle incoming WebSocket tasks from Java Master â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Handle incoming WebSocket tasks from Java Master ──────────────────────
   useEffect(() => {
     if (incomingTask && incomingTask.taskId) {
       addLog(`Received computation chunk [${incomingTask.taskId}] from Java Master Node!`, 'JAVA', 'info');
-      executeWorkerTask(
-  incomingTask.taskId,
-  incomingTask.algorithm === 'CHUNK_PROCESS'
-    ? 'PRIME_COUNT'
-    : (incomingTask.algorithm || 'PRIME_COUNT'),
-  incomingTask.algorithm === 'CHUNK_PROCESS'
-    ? { start: 1, end: 100000000 }
-    : (incomingTask.params || {})
-);
+      executeWorkerTask(incomingTask.taskId, incomingTask.algorithm || 'PRIME_COUNT', incomingTask.params || {});
       if (onTaskProcessed) onTaskProcessed(incomingTask.taskId);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [incomingTask]);
 
-  // â”€â”€ Dispatch task to Web Worker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Dispatch task to Web Worker ───────────────────────────────────────────
   const executeWorkerTask = (taskIdOverride = null, algoOverride = null, paramsOverride = null) => {
     if (!workerRef.current) {
       addLog('Worker thread is not initialised!', 'MAIN', 'error');
@@ -232,22 +224,22 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
       setElapsedTime(Date.now() - startTimeRef.current);
     }, 100);
 
-    addLog(`postMessage â†’ Worker: START [${taskId}] | ${ALGO_PRESETS[algo]?.label || algo}`, 'MAIN', 'info');
+    addLog(`postMessage → Worker: START [${taskId}] | ${ALGO_PRESETS[algo]?.label || algo}`, 'MAIN', 'info');
     workerRef.current.postMessage({ type: 'START', taskId, algorithm: algo, params: taskParams });
     if (onWorkerStateChange) onWorkerStateChange('computing');
   };
 
-  // â”€â”€ Cancel task â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Cancel task ───────────────────────────────────────────────────────────
   const terminateCurrentTask = () => {
     if (workerRef.current && activeTaskId) {
-      addLog(`Sending CANCEL signal for task [${activeTaskId}]â€¦`, 'MAIN', 'warning');
+      addLog(`Sending CANCEL signal for task [${activeTaskId}]…`, 'MAIN', 'warning');
       workerRef.current.postMessage({ type: 'CANCEL', taskId: activeTaskId });
       setStatus('cancelled');
       if (timerRef.current) clearInterval(timerRef.current);
     }
   };
 
-  // â”€â”€ Simulate Java Master Node dispatch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Simulate Java Master Node dispatch ────────────────────────────────────
   const handleSimulateJavaDispatch = () => {
     const mockTaskId = `JAVA-CHUNK-${Math.floor(1000 + Math.random() * 9000)}`;
     addLog(`[JAVA SIMULATOR] Dispatching chunk ${mockTaskId} to Worker Node`, 'JAVA', 'warning');
@@ -256,7 +248,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
 
   const isComputing = status === 'computing';
 
-  // â”€â”€ Unsupported browser fallback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Unsupported browser fallback ──────────────────────────────────────────
   if (!workerSupported) {
     return (
       <div className="glass-panel" style={{ padding: '2rem', textAlign: 'center', borderRadius: '16px' }}>
@@ -270,7 +262,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative' }}>
 
-      {/* â”€â”€ Loading Overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Loading Overlay ──────────────────────────────────────────────── */}
       {isComputing && (
         <div style={{
           position: 'absolute',
@@ -296,15 +288,15 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
             animation: 'spin 0.8s linear infinite'
           }} />
           <span style={{ color: '#93c5fd', fontWeight: 600, fontSize: '0.9rem', letterSpacing: '0.03em' }}>
-            Background thread computingâ€¦
+            Background thread computing…
           </span>
           <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontFamily: 'monospace' }}>
-            {(elapsedTime / 1000).toFixed(1)}s elapsed â€” UI remains responsive
+            {(elapsedTime / 1000).toFixed(1)}s elapsed — UI remains responsive
           </span>
         </div>
       )}
 
-      {/* â”€â”€ Header Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Header Panel ─────────────────────────────────────────────────── */}
       <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
@@ -390,7 +382,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
         </div>
       </div>
 
-      {/* â”€â”€ Task Configurator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Task Configurator ────────────────────────────────────────────── */}
       <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px' }}>
         <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Layers size={18} color="var(--accent-primary)" />
@@ -431,9 +423,9 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
               }}
             >
               <option value="PRIME_COUNT">Prime Numbers Range Search</option>
-              <option value="PI_MONTE_CARLO">Monte Carlo Ï€ Estimation</option>
+              <option value="PI_MONTE_CARLO">Monte Carlo π Estimation</option>
               <option value="FIBONACCI">BigInt Fibonacci Sequence</option>
-              <option value="MATRIX_COMPUTE">NÃ—N Matrix Operations</option>
+              <option value="MATRIX_COMPUTE">N×N Matrix Operations</option>
             </select>
           </div>
 
@@ -467,7 +459,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
 
           {selectedAlgo === 'MATRIX_COMPUTE' && (
             <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>MATRIX DIMENSION (NÃ—N)</label>
+              <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>MATRIX DIMENSION (N×N)</label>
               <input id="param-matrix-size" type="number" value={params.matrixSize} disabled={isComputing}
                 onChange={(e) => setParams({ ...params, matrixSize: Number(e.target.value) })}
                 style={{ width: '100%', padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'rgba(15,23,42,0.8)', color: 'var(--text-main)', border: '1px solid rgba(255,255,255,0.1)', fontSize: '0.875rem', outline: 'none' }} />
@@ -494,7 +486,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
             {isComputing ? (
               <>
                 <div style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.4)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                Computing in Backgroundâ€¦
+                Computing in Background…
               </>
             ) : (
               <>
@@ -561,7 +553,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
         </div>
       </div>
 
-      {/* â”€â”€ Progress Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Progress Bar ─────────────────────────────────────────────────── */}
       <ProgressBar
         progress={progress}
         currentStep={currentStep}
@@ -571,7 +563,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
         elapsedTime={elapsedTime}
       />
 
-      {/* â”€â”€ Result Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Result Card ──────────────────────────────────────────────────── */}
       <ResultCard
         resultData={resultData}
         workerId={workerId}
@@ -579,7 +571,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
         onReEmit={() => resultData && emitResultToJavaMaster(resultData)}
       />
 
-      {/* â”€â”€ Console Logs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Console Logs ─────────────────────────────────────────────────── */}
       <ConsoleLogs logs={logs} onClear={() => setLogs([])} />
 
     </div>
@@ -587,5 +579,3 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
 };
 
 export default WorkerPanel;
-
-
