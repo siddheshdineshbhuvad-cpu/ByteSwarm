@@ -18,27 +18,6 @@
 
 **Use Case:** An analyst needs to run a complex risk simulation on 10 million financial records. They upload the dataset to the **ByteSwarm** dashboard. The Java backend (built with Netty for ultra-high throughput) chunks the dataset into 10,000 tiny pieces. It then streams these chunks via WebSockets to 50 active React dashboards currently open across the company. The React apps silently compute the math in the background using HTML5 Web Workers, send the results back, and the Java backend stitches the final output together—achieving supercomputer speeds for free!
 
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.svg" width="100%" />
-
-## ✨ Interactive Animations (Demos)
-
-Showcase the dynamic and interactive features of the ByteSwarm UI below! *(Save your recorded GIFs in the `src/assets/` folder)*
-
-### 🖱️ Mouse Movement & Interaction
-*Interactive particle trails and dynamic hover effects responding to user mouse movements in real-time.*
-
-<img src="./src/assets/mouse-movement.gif" alt="Mouse Movement Demo" width="100%" style="border-radius: 8px; margin-bottom: 20px;" />
-
-### 🌧️ Rain Particles
-*Immersive falling rain background animation rendered smoothly behind the dashboard UI.*
-
-<img src="./src/assets/rain-animation.gif" alt="Rain Animation Demo" width="100%" style="border-radius: 8px; margin-bottom: 20px;" />
-
-### 🌟 Starry Grid
-*A dynamic starry background representing the vast, distributed nature of the connected Worker Nodes.*
-
-<img src="./src/assets/stars-animation.gif" alt="Starry Background Demo" width="100%" style="border-radius: 8px; margin-bottom: 20px;" />
-
 ## 📸 Screenshots
 
 ### 1. ByteSwarm Dashboard Overview
