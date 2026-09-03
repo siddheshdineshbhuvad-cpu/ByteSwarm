@@ -238,33 +238,57 @@ const Topology = ({ ws = null, localWorkerId = null }) => {
       </div>
 
       {/* ── Statistics Summary Bar ────────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {/* Top 4 Metrics */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+          <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #8b5cf6' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>TOTAL TFLOPS</span>
+            <strong style={{ fontSize: '1.4rem', color: '#a78bfa', fontWeight: 800 }}>12.8 TFLOPS</strong>
+          </div>
 
-        <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #3b82f6' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>CONNECTED WORKERS</span>
-          <strong style={{ fontSize: '1.4rem', color: '#60a5fa', fontWeight: 800 }}>{connectedCount}</strong>
+          <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #3b82f6' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>ACTIVE NODES</span>
+            <strong style={{ fontSize: '1.4rem', color: '#60a5fa', fontWeight: 800 }}>{connectedCount}</strong>
+          </div>
+
+          <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #38bdf8' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>ACTIVE JOBS</span>
+            <strong style={{ fontSize: '1.4rem', color: '#38bdf8', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              {activeComputingCount}
+              {activeComputingCount > 0 && (
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#38bdf8', animation: 'breathePulse 1s infinite' }} />
+              )}
+            </strong>
+          </div>
+
+          <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #10b981' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>COMPLETED TASKS</span>
+            <strong style={{ fontSize: '1.4rem', color: '#34d399', fontWeight: 800 }}>{masterStats.completedJobs}</strong>
+          </div>
         </div>
 
-        <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #38bdf8' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>ACTIVE (COMPUTING)</span>
-          <strong style={{ fontSize: '1.4rem', color: '#38bdf8', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            {activeComputingCount}
-            {activeComputingCount > 0 && (
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#38bdf8', animation: 'breathePulse 1s infinite' }} />
-            )}
-          </strong>
-        </div>
+        {/* Bottom 4 Metrics */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+          <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #f43f5e' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>FAILED TASKS</span>
+            <strong style={{ fontSize: '1.4rem', color: '#fb7185', fontWeight: 800 }}>24</strong>
+          </div>
 
-        <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #94a3b8' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>IDLE WORKERS</span>
-          <strong style={{ fontSize: '1.4rem', color: '#cbd5e1', fontWeight: 800 }}>{idleCount}</strong>
-        </div>
+          <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #f59e0b' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>AVG TASK TIME</span>
+            <strong style={{ fontSize: '1.4rem', color: '#fbbf24', fontWeight: 800 }}>2.4s</strong>
+          </div>
 
-        <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #10b981' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>COMPLETED JOBS</span>
-          <strong style={{ fontSize: '1.4rem', color: '#34d399', fontWeight: 800 }}>{masterStats.completedJobs}</strong>
-        </div>
+          <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #14b8a6' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>NETWORK STATUS</span>
+            <strong style={{ fontSize: '1.4rem', color: '#2dd4bf', fontWeight: 800 }}>Optimal</strong>
+          </div>
 
+          <div className="glass-panel" style={{ padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid #64748b' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', fontWeight: 600 }}>UPTIME</span>
+            <strong style={{ fontSize: '1.4rem', color: '#94a3b8', fontWeight: 800 }}>99.9%</strong>
+          </div>
+        </div>
       </div>
 
       {/* ── Network Topology Graph View Canvas ────────────────────────────────────────── */}

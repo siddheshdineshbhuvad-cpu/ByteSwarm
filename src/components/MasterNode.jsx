@@ -81,7 +81,11 @@ const MasterNode = ({ status = 'online', connectedCount = 4, activeJobs = 2, com
         }}
       >
         <div>
-          <span style={{ color: 'var(--text-muted)', display: 'block' }}>Workers</span>
+          <span style={{ color: 'var(--text-muted)', display: 'block' }}>Total TFLOPS</span>
+          <strong style={{ color: '#a78bfa', fontSize: '0.9rem' }}>12.8 T</strong>
+        </div>
+        <div>
+          <span style={{ color: 'var(--text-muted)', display: 'block' }}>Active Nodes</span>
           <strong style={{ color: '#60a5fa', fontSize: '0.9rem' }}>{connectedCount}</strong>
         </div>
         <div>
@@ -91,12 +95,6 @@ const MasterNode = ({ status = 'online', connectedCount = 4, activeJobs = 2, com
         <div>
           <span style={{ color: 'var(--text-muted)', display: 'block' }}>Completed</span>
           <strong style={{ color: '#34d399', fontSize: '0.9rem' }}>{completedJobs}</strong>
-        </div>
-        <div>
-          <span style={{ color: 'var(--text-muted)', display: 'block' }}>Host</span>
-          <strong style={{ color: 'var(--text-muted)', fontSize: '0.7rem', fontFamily: 'monospace' }}>
-            ws://{host}
-          </strong>
         </div>
       </div>
     </div>

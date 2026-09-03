@@ -354,6 +354,22 @@ The main objective of **Week 3** was to build a live, interactive **Network Topo
 
 ---
 
+# 📅 Week 4 – Dashboard Polish & Metrics Finalization
+
+## 🎯 Objective
+
+The main objective of **Week 4** was to finalize and polish the dashboard's metric cards to clearly show the swarm's important statistics, prioritizing Total TFLOPS and Active Nodes.
+
+## ✅ Week 4 Deliverables
+
+* 📊 Updated the Topology Dashboard with a professional 8-card responsive layout.
+* 📈 Highlighted key metrics: Total TFLOPS, Active Nodes, Active Jobs, and Completed Tasks.
+* 📉 Added supporting statistics: Failed Tasks, Average Task Time, Network Status, and Uptime.
+* 🖥️ Updated the Java Master Node component to prominently feature **Total TFLOPS** and **Active Nodes** to communicate scale and live health immediately.
+* ✨ Improved UI aesthetics and layout for clear, data-driven visualization.
+
+---
+
 # 📁 Project Structure
 
 ```text
@@ -385,7 +401,6 @@ BYTESWARM/
 ---
 
 # 📈 Overall Project Progress
-# 📈 Overall Project Progress
 
 | Phase                                     |    Progress |
 | ----------------------------------------- | ----------: |
@@ -393,7 +408,8 @@ BYTESWARM/
 | 📅 Week 2 – Web Worker Integration        |      ✅ 100% |
 | 🟢 Mid-Project Review – Thread Isolation  |      ✅ 100% |
 | 🌐 Week 3 – Network Topology UI           |      ✅ 100% |
-| 🚀 Overall Development Status             | 🟢 On Track |
+| 📊 Week 4 – Dashboard Polish & Metrics    |      ✅ 100% |
+| 🚀 Overall Development Status             | 🟢 Completed |
 
 ## 📝 Additional Updates
 
@@ -423,10 +439,13 @@ Mid-Project Review – Thread Isolation Check
 Week 3 – Network Topology UI
 ████████████████████ 100% ✅
 
+Week 4 – Dashboard Polish & Metrics
+████████████████████ 100% ✅
+
 Overall Project Status
-████████████████████ On Track 🚀
+████████████████████ Completed 🚀
 ```
 
-ByteSwarm's frontend foundation, Web Worker integration, Thread Isolation Check, and Week 3 Network Topology UI are 100% completed and ready for evaluation.
+ByteSwarm's frontend foundation, Web Worker integration, Thread Isolation Check, Network Topology UI, and polished dashboard metrics are 100% completed and ready for evaluation.
 
 
