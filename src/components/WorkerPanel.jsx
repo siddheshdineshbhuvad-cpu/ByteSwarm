@@ -6,7 +6,7 @@ import { Cpu, Play, Square, RefreshCw, Send, Layers, AlertTriangle, Wifi, WifiOf
 
 const ALGO_PRESETS = {
   PRIME_COUNT:    { label: 'Prime Numbers Range Search',  description: 'Count all primes in range [1, N] using trial division.' },
-  PI_MONTE_CARLO: { label: 'Monte Carlo Ï€ Estimation',    description: 'Estimate Ï€ by sampling random points in a unit circle.' },
+  PI_MONTE_CARLO: { label: 'Monte Carlo π Estimation',    description: 'Estimate Ï€ by sampling random points in a unit circle.' },
   FIBONACCI:      { label: 'BigInt Fibonacci Sequence',   description: 'Compute the Nth Fibonacci number using arbitrary-precision BigInt.' },
   MATRIX_COMPUTE: { label: 'NÃ—N Matrix Multiplication',  description: 'Multiply two NÃ—N matrices using sin/cos-initialised values.' },
 };
@@ -431,9 +431,9 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
               }}
             >
               <option value="PRIME_COUNT">Prime Numbers Range Search</option>
-              <option value="PI_MONTE_CARLO">Monte Carlo Ï€ Estimation</option>
+              <option value="PI_MONTE_CARLO">Monte Carlo π Estimation</option>
               <option value="FIBONACCI">BigInt Fibonacci Sequence</option>
-              <option value="MATRIX_COMPUTE">NÃ—N Matrix Operations</option>
+              <option value="MATRIX_COMPUTE">N×N Matrix Operations</option>
             </select>
           </div>
 
@@ -587,5 +587,7 @@ const WorkerPanel = ({ workerId = 'WKR-8492', ws = null, incomingTask = null, on
 };
 
 export default WorkerPanel;
+
+
 
 

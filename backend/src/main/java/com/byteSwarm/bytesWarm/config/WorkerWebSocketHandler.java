@@ -25,14 +25,29 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionEstablished(
-            WebSocketSession session) {
+    public void afterConnectionEstablished(WebSocketSession session) {
 
         String workerId = session.getId();
 
         Worker worker = new Worker(workerId, session);
 
         workerRegistry.registerWorker(worker);
+
+        try {
+
+            String statusMessage =
+                    "{\"type\":\"WORKER_STATUS\","
+                            + "\"workerId\":\"" + workerId + "\","
+                            + "\"status\":\"" + Worker.AVAILABLE + "\","
+                            + "\"progress\":0}";
+
+            session.sendMessage(
+                    new TextMessage(statusMessage)
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         System.out.println(
                 "[WORKER CONNECTED] Worker registered: "
@@ -61,14 +76,19 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
         );
 
         if (worker == null) {
+
             System.out.println(
                     "[WORKER MESSAGE] Worker not found: "
                             + workerId
             );
+
             return;
         }
 
-        // Worker completed current task
+        // ==========================================
+        // WORKER TASK COMPLETED
+        // ==========================================
+
         if (payload.contains("\"type\":\"TASK_COMPLETED\"")
                 || payload.contains("\"type\":\"TASK_RESULT\"")
                 || payload.contains("\"status\":\"COMPLETED\"")
@@ -79,6 +99,7 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
                     worker.getCurrentTaskId();
 
             worker.clearCurrentTask();
+
             worker.setStatus(Worker.COMPLETED);
 
             System.out.println(
@@ -90,6 +111,7 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
                             + Worker.COMPLETED
             );
 
+            // Worker ready for next task
             worker.setStatus(Worker.AVAILABLE);
 
             System.out.println(
@@ -99,7 +121,10 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
             );
         }
 
-        // Worker explicitly reports failure
+        // ==========================================
+        // WORKER TASK FAILED
+        // ==========================================
+
         else if (payload.contains("\"type\":\"TASK_FAILED\"")
                 || payload.contains("\"status\":\"FAILED\"")
                 || payload.contains("FAILED")) {
@@ -112,6 +137,7 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
                             + " reported task failure."
             );
 
+            // Recover unfinished task
             chunkDispatchService.recoverWorkerTask(workerId);
         }
     }
@@ -128,6 +154,10 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
 
         if (worker != null) {
 
+            // ==========================================
+            // WORKER FAILURE DETECTED
+            // ==========================================
+
             worker.setStatus(Worker.FAILED);
 
             System.out.println(
@@ -138,8 +168,15 @@ public class WorkerWebSocketHandler extends TextWebSocketHandler {
                             + Worker.FAILED
             );
 
-            // Recover unfinished chunk
+            // ==========================================
+            // RECOVER UNFINISHED CHUNK
+            // ==========================================
+
             chunkDispatchService.recoverWorkerTask(workerId);
+
+            // ==========================================
+            // REMOVE FAILED WORKER
+            // ==========================================
 
             workerRegistry.removeWorker(workerId);
 
